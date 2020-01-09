@@ -31,7 +31,9 @@ collections_refunds <- map2_df(.x = targets$month,
                                .f = ~f(month = .x, year = .y)) %>%
   mutate(date = sprintf("%s/%s/1", str_to_title(month), year)) %>%
   mutate(date = as.Date(date, format = "%B/%Y/%d")) %>%
-  mutate(fiscal_year = ifelse(lubridate::month(date) > 6, lubridate::year(date) + 1, lubridate::year(date)))
+  mutate(fiscal_year = ifelse(lubridate::month(date) > 6, lubridate::year(date) + 1, lubridate::year(date))) %>%
+  mutate_at(.vars = c("gross_collections", "foreign_collections", "refunds", "net_collections"),
+            .funs = as.numeric)
 
 # Write data ----
 write_rds(collections_refunds, path = "data/collections_refunds.rds")
