@@ -1,0 +1,23 @@
+---
+title: "NC Department of Revenue"
+subtitle: "Local Government Sales Tax Data"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = FALSE)
+```
+
+<link href="https://fonts.googleapis.com/css?family=Roboto+Condensed&display=swap" rel="stylesheet">
+<style>* {font-size: 100%; font-family: Roboto Condensed, sans-serif;}</style>
+
+
+## Monthly Sales and Use Tax
+
+- [Consolidated Excel Files](https://github.com/jasonajones73/ncdor/tree/master/files/monthly_sales)
+- [Single Tidy Data File](https://raw.githubusercontent.com/jasonajones73/ncdor/master/data/monthly_sales.csv)
+
+## Local Government Sales and Use Tax Distribution
+
+- [Consolidated Excel Files](https://github.com/jasonajones73/ncdor/tree/master/files/distributions)
+- [Single Tidy Collections/Refunds Data File](https://raw.githubusercontent.com/jasonajones73/ncdor/master/data/collections_refunds.csv)
