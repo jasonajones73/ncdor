@@ -28,13 +28,15 @@ f <- function(month, year) {
     mutate_at(.vars = vars(gross_collections, taxable_sales), .funs = as.numeric) %>%
     filter(is.na(taxable_sales) != TRUE) %>%
     filter(county != "TOTALS") %>%
-    filter(is.character(taxable_sales) != TRUE)
+    filter(is.character(taxable_sales) != TRUE) %>%
+    filter(taxable_sales != 0)
   part_two <- select(dat, 4:6) %>%
     rename(county = 1, gross_collections = 2, taxable_sales = 3) %>%
     mutate_at(.vars = vars(gross_collections, taxable_sales), .funs = as.numeric) %>%
     filter(is.na(taxable_sales) != TRUE) %>%
     filter(county != "TOTALS") %>%
-    filter(is.character(taxable_sales) != TRUE)
+    filter(is.character(taxable_sales) != TRUE) %>%
+    filter(taxable_sales != 0)
   rbind(part_one, part_two) %>%
     mutate(month = month, year = year)
 }
