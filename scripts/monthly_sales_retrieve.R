@@ -15,17 +15,12 @@ targets <- read_csv("files/monthly_sales/monthly_sales_targets.csv",
   mutate(month = str_to_lower(month))
 
 # Construct function
-# Note: This is not how I wanted to construct this function. There is a single
-# misspelling in the URL for October 2017 that I could not write error
-# handling for. Since it is the only known error, I wrote in an ifelse handle
 f <- function(month, year) {
   target_url <- sprintf("https://www.ncdor.gov/documents/monthly-state-sales-and-use-tax-statistics-%s-%s", month, year)
   ncdor <- read_html(target_url)
   xml_stuff <- html_nodes(ncdor, ".file a") %>%
     xml_attrs()
-  doc_link <- ifelse(length(xml_stuff) > 0,
-                     xml_stuff[[4]][["href"]],
-                     "https://files.nc.gov/ncdor/documents/files/sandu_10-17_2.xlsx")
+  doc_link <- xml_stuff[[4]][["href"]]
   GET(url = doc_link, write_disk(path = sprintf("files/monthly_sales/monthly-sales-%s-%s.xls", month, year), overwrite = TRUE))
 }
 
