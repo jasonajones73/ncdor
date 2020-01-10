@@ -1,6 +1,6 @@
 ## Date: 2020-01-09
 ## Author: Jason Jones
-## Purpose: Harvest files from NC DOR
+## Purpose: Harvest files for Local Gov Distributions from NC DOR
 
 # Load packages ----
 library(rvest)
@@ -9,8 +9,8 @@ library(tidyverse)
 
 # Read in targets ----
 # Note: targets.csv file should be updated to reflect all of the files that
-# you would like to capture. Currently Jan 2016 - Nov 2019
-targets <- read_csv("files/targets.csv",
+# you would like to capture. Currently Jul 2016 - Nov 2019
+targets <- read_csv("files/distributions/dist_targets.csv",
                     col_types = cols(year = col_character())) %>%
   mutate(month = str_to_lower(month))
 
@@ -26,7 +26,7 @@ f <- function(month, year) {
   doc_link <- ifelse(length(xml_stuff) > 0,
                      xml_stuff[[4]][["href"]],
                      "https://files.nc.gov/ncdor/documents/files/sandu_10-17_2.xlsx")
-  GET(url = doc_link, write_disk(path = sprintf("files/%s-%s.xlsx", month, year), overwrite = TRUE))
+  GET(url = doc_link, write_disk(path = sprintf("files/distributions/%s-%s.xlsx", month, year), overwrite = TRUE))
 }
 
 # Download files
