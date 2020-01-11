@@ -114,8 +114,7 @@ f <- function(year) {
     mutate(categories = str_remove_all(categories, "♣"))
   
   rbind(part_one, part_two) %>%
-    mutate(year = year) %>%
-    mutate_at(.vars = vars(gross_collections, taxable_sales_and_purchases), .funs = ~str_replace(., "-", ""))
+    mutate(year = year)
 }
 
 # Combine files for collections and refunds ---
