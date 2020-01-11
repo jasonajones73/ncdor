@@ -131,12 +131,6 @@ write_csv(sales_and_use, path = "data/sales_and_use.csv", na = "", append = FALS
 
 
 
-
-
-
-
-
-
 # Function refinement
 # Everything below is for ad-hoc evaluation of function scoping
 

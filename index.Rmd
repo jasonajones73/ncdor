@@ -17,7 +17,13 @@ knitr::opts_chunk$set(echo = FALSE)
 - [Consolidated Excel Files](https://github.com/jasonajones73/ncdor/tree/master/files/monthly_sales)
 - [Single Tidy Data File](https://raw.githubusercontent.com/jasonajones73/ncdor/master/data/monthly_sales.csv)
 
+## Sales and Use Tax County Detail
+
+- [Consolidated Excel Files](https://github.com/jasonajones73/ncdor/tree/master/files/sales_and_use)
+- [Single Tidy Data File](https://raw.githubusercontent.com/jasonajones73/ncdor/master/data/sales_and_use.csv)
+
 ## Local Government Sales and Use Tax Distribution
 
 - [Consolidated Excel Files](https://github.com/jasonajones73/ncdor/tree/master/files/distributions)
 - [Single Tidy Collections/Refunds Data File](https://raw.githubusercontent.com/jasonajones73/ncdor/master/data/collections_refunds.csv)
+
