@@ -12,6 +12,10 @@ targets <- read_csv("files/monthly_sales/monthly_sales_targets.csv",
                     col_types = cols(year = col_character())) %>%
   mutate(month = str_to_lower(month))
 
+# Filter November 2007 for now ----
+targets <- targets %>%
+  filter(paste(month, year) != "november 2007")
+
 # Construct read function for collections and refunds ----
 f <- function(month, year) {
   path = sprintf("files/monthly_sales/monthly-sales-%s-%s.xls", month, year)

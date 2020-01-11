@@ -20,7 +20,9 @@ f <- function(month, year) {
   ncdor <- read_html(target_url)
   xml_stuff <- html_nodes(ncdor, ".file a") %>%
     xml_attrs()
-  doc_link <- xml_stuff[[4]][["href"]]
+  doc_link <- ifelse(length(xml_stuff) > 3,
+                     xml_stuff[[4]][["href"]],
+                     "https://www.ncdor.gov/documents/monthly-state-sales-and-use-tax-statistics-october-2007")
   GET(url = doc_link, write_disk(path = sprintf("files/monthly_sales/monthly-sales-%s-%s.xls", month, year), overwrite = TRUE))
 }
 
