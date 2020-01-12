@@ -1,3 +1,5 @@
-# NC Local Government Sales and Use Tax Distribution
+# NC Department of Revenue Data
 
-Cleaning and compiling Local Government Sales and Use Tax Distribution data from the NC Department of Revenue
+Cleaning and compiling data from the NC Department of Revenue for local government use.
+
+Links to current files can be found here: https://jasonajones73.github.io/ncdor/
