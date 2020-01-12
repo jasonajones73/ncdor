@@ -96,7 +96,8 @@ summary <- map2_df(.x = targets$month,
   mutate_at(.vars = 3:11,
             .funs = as.numeric) %>%
   filter(!municipality %in% c("Per Capita Distributable", "Advalorem Distributable",
-                              "Grand Total", "Total Distributable Amount", "Summary Of Amounts", "County/Transit Distributable"))
+                              "Grand Total", "Total Distributable Amount", "Summary Of Amounts", "County/Transit Distributable")) %>%
+  mutate_all(.funs = str_trim)
 
 # Write data ----
 write_rds(summary, path = "data/summary.rds")
