@@ -14,6 +14,14 @@ targets <- read_csv("files/distributions/dist_targets.csv",
                     col_types = cols(year = col_character())) %>%
   mutate(month = str_to_lower(month))
 
+# Here is where we are updating the target object for new month
+# You should change these values for the new month
+targets <- targets %>%
+  add_row(month = "december", year = "2019")
+
+# This is overwriting your targets.csv file with the new row you have added
+write_csv(targets, "files/distributions/dist_targets.csv", append = FALSE)
+
 # Construct function
 # Note: This is not how I wanted to construct this function. There is a single
 # misspelling in the URL for October 2017 that I could not write error

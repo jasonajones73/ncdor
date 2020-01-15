@@ -13,6 +13,14 @@ library(tidyverse)
 targets <- read_csv("files/sales_and_use/sales_and_use_targets.csv",
                     col_types = cols(year = col_character()))
 
+# Here is where we are updating the target object for new month
+# You should change this value to the new year
+targets <- targets %>%
+  add_row(year = "2020")
+
+# This is overwriting your targets.csv file with the new row you have added
+write_csv(targets, "files/sales_and_use/sales_and_use_targets.csv", append = FALSE)
+
 # Construct function
 f <- function(year) {
   target_url <- sprintf("https://www.ncdor.gov/documents/annual-state-sales-and-use-tax-statistics-fy-%s", year)
