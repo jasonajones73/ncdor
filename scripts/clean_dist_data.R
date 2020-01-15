@@ -35,26 +35,8 @@ collections_refunds <- map2_df(.x = targets$month,
   mutate_at(.vars = c("gross_collections", "foreign_collections", "refunds", "net_collections"),
             .funs = as.numeric)
 
-# Construct read function for summary data ----
-f <- function(month, year) {
-  path = sprintf("files/%s-%s.xlsx", month, year)
-  read_xlsx(path = path,
-            sheet = 6, skip = 1, col_types = "text") %>%
-    clean_names() %>%
-    remove_empty(which = c("rows", "cols"))
-}
 
 # Write data ----
 write_rds(collections_refunds, path = "data/collections_refunds.rds")
 write_csv(collections_refunds, path = "data/collections_refunds.csv", na = "", append = FALSE)
 
-
-
-
-path = "files/july-2016.xlsx"
-
-x <- read_xlsx(path = path,
-          sheet = 6, skip = 1, col_types = "text") %>%
-  clean_names() %>%
-  remove_empty(which = c("rows", "cols")) %>%
-  select(-x1, -total)
