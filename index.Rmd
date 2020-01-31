@@ -6,6 +6,15 @@ output: html_document
 
 ```{r setup, include=FALSE}
 knitr::opts_chunk$set(echo = FALSE)
+library(tidyverse)
+library(reactable)
+library(sparkline)
+
+collections_refunds <- read_rds("data/collections_refunds.rds")
+summary <- read_rds("data/summary.rds")
+article_overview <- read_rds("data/article_overview.rds")
+monthly_sales <- read_rds("data/monthly_sales.rds")
+sales_and_use <- read_rds("data/sales_and_use.rds")
 ```
 
 <link href="https://fonts.googleapis.com/css?family=Roboto+Condensed&display=swap" rel="stylesheet">
@@ -28,3 +37,91 @@ knitr::opts_chunk$set(echo = FALSE)
 - [Single Tidy Collections/Refunds Data File](https://raw.githubusercontent.com/jasonajones73/ncdor/master/data/collections_refunds.csv)
 - [Single Tidy Article Overview Data File](https://raw.githubusercontent.com/jasonajones73/ncdor/master/data/article_overview.csv)
 - [Single Tidy Summary Data File](https://raw.githubusercontent.com/jasonajones73/ncdor/master/data/summary.csv)
+
+## Interactive Tables {.tabset .tabset-fade .tabset-pills}
+
+### Gross Collections
+
+```{r}
+data <- collections_refunds %>%
+  select(county, date, gross_collections) %>%
+  group_by(county) %>%
+  nest(gross_collections_line = c(date, gross_collections),
+       gross_collections_box = c(date, gross_collections))
+
+reactable(data, bordered = TRUE, highlight = TRUE, defaultColDef = colDef(align = "center"),
+          searchable = TRUE, defaultPageSize = 20, columns = list(
+  county = colDef(name = "County"),
+  gross_collections_line = colDef(name = "Gross Collections Line", cell = function(value) {
+    sparkline(value$gross_collections, type = "line", width = "100%")
+  }),
+  gross_collections_box = colDef(name = "Gross Collections Boxplot", cell = function(value) {
+    sparkline(value$gross_collections, type = "box", width = "100%")
+  })
+))
+```
+
+### Foreign Collections
+
+```{r}
+data <- collections_refunds %>%
+  select(county, date, foreign_collections) %>%
+  group_by(county) %>%
+  nest(foreign_collections_line = c(date, foreign_collections),
+       foreign_collections_box = c(date, foreign_collections))
+
+reactable(data, bordered = TRUE, highlight = TRUE, defaultColDef = colDef(align = "center"),
+          searchable = TRUE, defaultPageSize = 20, columns = list(
+  county = colDef(name = "County"),
+  foreign_collections_line = colDef(name = "Foreign Collections Line", cell = function(value) {
+    sparkline(value$foreign_collections, type = "line", width = "100%")
+  }),
+  foreign_collections_box = colDef(name = "Fross Collections Boxplot", cell = function(value) {
+    sparkline(value$foreign_collections, type = "box", width = "100%")
+  })
+))
+```
+
+
+### Refunds
+
+```{r}
+data <- collections_refunds %>%
+  select(county, date, refunds) %>%
+  group_by(county) %>%
+  nest(refunds_line = c(date, refunds),
+       refunds_box = c(date, refunds))
+
+reactable(data, bordered = TRUE, highlight = TRUE, defaultColDef = colDef(align = "center"),
+          searchable = TRUE, defaultPageSize = 20, columns = list(
+  county = colDef(name = "County"),
+  refunds_line = colDef(name = "Refunds Line", cell = function(value) {
+    sparkline(value$refunds, type = "line", width = "100%")
+  }),
+  refunds_box = colDef(name = "Refunds Boxplot", cell = function(value) {
+    sparkline(value$refunds, type = "box", width = "100%")
+  })
+))
+```
+
+
+### Net Collections
+
+```{r}
+data <- collections_refunds %>%
+  select(county, date, net_collections) %>%
+  group_by(county) %>%
+  nest(net_collections_line = c(date, net_collections),
+       net_collections_box = c(date, net_collections))
+
+reactable(data, bordered = TRUE, highlight = TRUE, defaultColDef = colDef(align = "center"),
+          searchable = TRUE, defaultPageSize = 20, columns = list(
+  county = colDef(name = "County"),
+  net_collections_line = colDef(name = "Net Collections Line", cell = function(value) {
+    sparkline(value$net_collections, type = "line", width = "100%")
+  }),
+  net_collections_box = colDef(name = "Net Collections Boxplot", cell = function(value) {
+    sparkline(value$net_collections, type = "box", width = "100%")
+  })
+))
+```
