@@ -51,7 +51,7 @@ data <- collections_refunds %>%
 
 reactable(data, bordered = TRUE, highlight = TRUE, defaultColDef = colDef(align = "center"),
           searchable = TRUE, defaultPageSize = 20, columns = list(
-  county = colDef(name = "County"),
+  county = colDef(name = "County", align = "left"),
   gross_collections_line = colDef(name = "Gross Collections Line", cell = function(value) {
     sparkline(value$gross_collections, type = "line", width = "100%")
   }),
@@ -72,7 +72,7 @@ data <- collections_refunds %>%
 
 reactable(data, bordered = TRUE, highlight = TRUE, defaultColDef = colDef(align = "center"),
           searchable = TRUE, defaultPageSize = 20, columns = list(
-  county = colDef(name = "County"),
+  county = colDef(name = "County", align = "left"),
   foreign_collections_line = colDef(name = "Foreign Collections Line", cell = function(value) {
     sparkline(value$foreign_collections, type = "line", width = "100%")
   }),
@@ -94,7 +94,7 @@ data <- collections_refunds %>%
 
 reactable(data, bordered = TRUE, highlight = TRUE, defaultColDef = colDef(align = "center"),
           searchable = TRUE, defaultPageSize = 20, columns = list(
-  county = colDef(name = "County"),
+  county = colDef(name = "County", align = "left"),
   refunds_line = colDef(name = "Refunds Line", cell = function(value) {
     sparkline(value$refunds, type = "line", width = "100%")
   }),
@@ -116,7 +116,7 @@ data <- collections_refunds %>%
 
 reactable(data, bordered = TRUE, highlight = TRUE, defaultColDef = colDef(align = "center"),
           searchable = TRUE, defaultPageSize = 20, columns = list(
-  county = colDef(name = "County"),
+  county = colDef(name = "County", align = "left"),
   net_collections_line = colDef(name = "Net Collections Line", cell = function(value) {
     sparkline(value$net_collections, type = "line", width = "100%")
   }),
