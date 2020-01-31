@@ -125,3 +125,24 @@ reactable(data, bordered = TRUE, highlight = TRUE, defaultColDef = colDef(align 
   })
 ))
 ```
+
+### Taxable Sales
+
+```{r}
+data <- monthly_sales %>%
+  select(county, date, taxable_sales) %>%
+  group_by(county) %>%
+  nest(taxable_sales_line = c(date, taxable_sales),
+       taxable_sales_box = c(date, taxable_sales))
+
+reactable(data, bordered = TRUE, highlight = TRUE, defaultColDef = colDef(align = "center"),
+          searchable = TRUE, defaultPageSize = 20, columns = list(
+  county = colDef(name = "County", align = "left"),
+  taxable_sales_line = colDef(name = "Taxable Sales Line", cell = function(value) {
+    sparkline(value$taxable_sales, type = "line", width = "100%")
+  }),
+  taxable_sales_box = colDef(name = "Taxable Sales Boxplot", cell = function(value) {
+    sparkline(value$taxable_sales, type = "box", width = "100%")
+  })
+))
+```
