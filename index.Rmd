@@ -20,6 +20,9 @@ sales_and_use <- read_rds("data/sales_and_use.rds")
 <link href="https://fonts.googleapis.com/css?family=Roboto+Condensed&display=swap" rel="stylesheet">
 <style>* {font-size: 100%; font-family: Roboto Condensed, sans-serif;}</style>
 
+## Last Updated
+
+This data was last updated on **`r Sys.Date()`**
 
 ## Monthly Sales and Use Tax
 
