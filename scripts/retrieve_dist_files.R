@@ -17,7 +17,7 @@ targets <- read_csv("files/distributions/dist_targets.csv",
 # Here is where we are updating the target object for new month
 # You should change these values for the new month
 targets <- targets %>%
-  add_row(month = "february", year = "2020")
+  add_row(month = "march", year = "2020")
 
 # This is overwriting your targets.csv file with the new row you have added
 write_csv(targets, "files/distributions/dist_targets.csv", append = FALSE)
@@ -41,6 +41,3 @@ f <- function(month, year) {
 map2(.x = targets$month,
      .y = targets$year,
      .f = ~f(month = .x, year = .y))
-
-
-

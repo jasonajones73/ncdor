@@ -1,0 +1,27 @@
+---
+name: "ncdor"
+title: "Local Government Sales Tax Data"
+output_dir: "."
+navbar:
+  right:
+    - text: "Home"
+      href: index.html
+    - text: "Gross Collections"
+      href: gross.html
+    - text: "Foreign Collections"
+      href: foreign.html
+    - text: "Refunds"
+      href: refunds.html
+    - text: "Net Collections"
+      href: net.html
+    - text: "Taxable Sales"
+      href: taxable.html
+    - icon: fab fa-github fa-2x
+      href: https://github.com/jasonajones73/ncdor
+    - icon: fab fa-twitter fa-2x
+      href: https://twitter.com/packpridejones?lang=en
+output:
+  distill::distill_article:
+    css: style/styles.css
+    toc: true
+---

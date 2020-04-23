@@ -1,0 +1,48 @@
+---
+title: "Site and Data Overview"
+description: |
+  A quick overview of what you will find here.
+author:
+  - name: Jason Jones
+    url: https://jasonajones.netlify.app/
+date: "`r Sys.Date()`"
+output: distill::distill_article
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = FALSE)
+library(tidyverse)
+library(reactable)
+library(sparkline)
+library(here)
+
+collections_refunds <- read_rds(here("data/collections_refunds.rds"))
+summary <- read_rds(here("data/summary.rds"))
+article_overview <- read_rds(here("data/article_overview.rds"))
+monthly_sales <- read_rds(here("data/monthly_sales.rds"))
+sales_and_use <- read_rds(here("data/sales_and_use.rds"))
+```
+
+<link href="https://fonts.googleapis.com/css?family=Roboto+Condensed&display=swap" rel="stylesheet">
+<style>* {font-size: 100%; font-family: Roboto Condensed, sans-serif;}</style>
+
+# Monthly Sales and Use Tax
+
+- [Consolidated Excel Files](https://github.com/jasonajones73/ncdor/tree/master/files/monthly_sales)
+- [Single Tidy Data File](https://raw.githubusercontent.com/jasonajones73/ncdor/master/data/monthly_sales.csv)
+
+# Sales and Use Tax County Detail
+
+- [Consolidated Excel Files](https://github.com/jasonajones73/ncdor/tree/master/files/sales_and_use)
+- [Single Tidy Data File](https://raw.githubusercontent.com/jasonajones73/ncdor/master/data/sales_and_use.csv)
+
+# Local Government Sales and Use Tax Distribution
+
+- [Consolidated Excel Files](https://github.com/jasonajones73/ncdor/tree/master/files/distributions)
+- [Single Tidy Collections/Refunds Data File](https://raw.githubusercontent.com/jasonajones73/ncdor/master/data/collections_refunds.csv)
+- [Single Tidy Article Overview Data File](https://raw.githubusercontent.com/jasonajones73/ncdor/master/data/article_overview.csv)
+- [Single Tidy Summary Data File](https://raw.githubusercontent.com/jasonajones73/ncdor/master/data/summary.csv)
+
+# Last Updated
+
+This data was `r sprintf('last updated %s', format(Sys.time(), '%b %d, %Y at %I:%M %p'))`

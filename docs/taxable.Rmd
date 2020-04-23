@@ -1,0 +1,46 @@
+---
+title: "Taxable Sales"
+description: |
+  NC Department of Revenue Gross Collections
+author:
+  - name: Jason Jones
+    url: https://jasonajones.netlify.app/
+date: "`r Sys.Date()`"
+output: distill::distill_article
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = FALSE)
+library(tidyverse)
+library(reactable)
+library(sparkline)
+library(here)
+
+collections_refunds <- read_rds(here("data/collections_refunds.rds"))
+summary <- read_rds(here("data/summary.rds"))
+article_overview <- read_rds(here("data/article_overview.rds"))
+monthly_sales <- read_rds(here("data/monthly_sales.rds"))
+sales_and_use <- read_rds(here("data/sales_and_use.rds"))
+```
+
+<link href="https://fonts.googleapis.com/css?family=Roboto+Condensed&display=swap" rel="stylesheet">
+<style>* {font-size: 100%; font-family: Roboto Condensed, sans-serif;}</style>
+
+```{r}
+data <- monthly_sales %>%
+  select(county, date, taxable_sales) %>%
+  group_by(county) %>%
+  nest(taxable_sales_line = c(date, taxable_sales),
+       taxable_sales_box = c(date, taxable_sales))
+
+reactable(data, bordered = TRUE, highlight = TRUE, defaultColDef = colDef(align = "center"),
+          searchable = TRUE, defaultPageSize = 20, columns = list(
+  county = colDef(name = "County", align = "left"),
+  taxable_sales_line = colDef(name = "Taxable Sales Line", cell = function(value) {
+    sparkline(as.data.frame(value)$taxable_sales, type = "line", width = "100%")
+    }),
+  taxable_sales_box = colDef(name = "Taxable Sales Boxplot", cell = function(value) {
+    sparkline(as.data.frame(value)$taxable_sales, type = "box", width = "100%")
+  })
+))
+```

@@ -1,0 +1,43 @@
+---
+title: "Foreign Collections"
+description: |
+  NC Department of Revenue Gross Collections
+author:
+  - name: Jason Jones
+    url: https://jasonajones.netlify.app/
+date: "`r Sys.Date()`"
+output: distill::distill_article
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = FALSE)
+library(tidyverse)
+library(reactable)
+library(sparkline)
+library(here)
+
+collections_refunds <- read_rds(here("data/collections_refunds.rds"))
+summary <- read_rds(here("data/summary.rds"))
+article_overview <- read_rds(here("data/article_overview.rds"))
+monthly_sales <- read_rds(here("data/monthly_sales.rds"))
+sales_and_use <- read_rds(here("data/sales_and_use.rds"))
+```
+
+```{r}
+data <- collections_refunds %>%
+  select(county, date, foreign_collections) %>%
+  group_by(county) %>%
+  nest(foreign_collections_line = c(date, foreign_collections),
+       foreign_collections_box = c(date, foreign_collections))
+
+reactable(data, bordered = TRUE, highlight = TRUE, defaultColDef = colDef(align = "center"),
+          searchable = TRUE, defaultPageSize = 20, columns = list(
+  county = colDef(name = "County", align = "left"),
+  foreign_collections_line = colDef(name = "Foreign Collections Line", cell = function(value) {
+    sparkline(as.data.frame(value)$foreign_collections, type = "line", width = "100%")
+  }),
+  foreign_collections_box = colDef(name = "Fross Collections Boxplot", cell = function(value) {
+    sparkline(as.data.frame(value)$foreign_collections, type = "box", width = "100%")
+  })
+))
+```
