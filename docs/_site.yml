@@ -4,8 +4,6 @@ title: "Local Government Sales Tax Data"
 output_dir: "."
 navbar:
   right:
-    - text: "Home"
-      href: index.html
     - text: "Gross Collections"
       href: gross.html
     - text: "Foreign Collections"
