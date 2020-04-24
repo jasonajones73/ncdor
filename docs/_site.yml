@@ -20,6 +20,8 @@ navbar:
       href: https://twitter.com/packpridejones?lang=en
 output:
   distill::distill_article:
+    includes:
+      in_header: myHeader.html
     css: style/styles.css
     toc: true
 ---
