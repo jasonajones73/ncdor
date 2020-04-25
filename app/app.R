@@ -21,13 +21,13 @@ ui <- fluidPage(
         ), # closing sidebarPanel
         mainPanel(
             tabsetPanel(type = "tabs",
-                tabPanel(title = "Collections & Refunds", icon = icon("chart-bar", class = "fa-2x"),
+                tabPanel(title = "Collections & Refunds", icon = icon("balance-scale"),
                          echartUI("chart1"),
                          echartUI("chart2"),
                          echartUI("chart3"),
                          echartUI("chart4")
                          ), # closing tabPanel for Collections & Refunds
-                tabPanel(title = "Taxable Sales", icon = icon("chart-bar", class = "fa-2x"),
+                tabPanel(title = "Taxable Sales", icon = icon("money-bill"),
                          echartUI("chart5")
                          ) # closing tabPanel Article Overview
             ) # closing tabsetPanel
