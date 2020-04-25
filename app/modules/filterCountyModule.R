@@ -8,7 +8,7 @@ filterDataInputsUI <- function(id, counties) {
     selectInput(inputId = ns("county"),
                 label = "Please select the county of interest:",
                 choices = counties,
-                selected = "Guilford",
+                selected = "Alamance",
                 selectize = TRUE
                 )
     )
