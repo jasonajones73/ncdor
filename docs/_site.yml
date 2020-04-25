@@ -14,6 +14,8 @@ navbar:
       href: net.html
     - text: "Taxable Sales"
       href: taxable.html
+    - text: "Interactive Dashboard"
+      href: dashboard.html
     - icon: fab fa-github fa-2x
       href: https://github.com/jasonajones73/ncdor
     - icon: fab fa-twitter fa-2x

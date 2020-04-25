@@ -1,0 +1,25 @@
+---
+title: "Interactive Dashboard"
+description: |
+  Interactive visuals for NC DOR data.
+author:
+  - name: Jason Jones 
+    url: https://jasonajones.netlify.app/
+date: "`r Sys.Date()`"
+output: distill::distill_article
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = FALSE)
+library(htmltools)
+```
+
+```{r}
+tags$iframe(src='https://jason-jones.shinyapps.io/ncdor/', style = 'height:600px; width: 100%; border:0px;')
+```
+
+
+
+
+
+
