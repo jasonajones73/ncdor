@@ -46,6 +46,7 @@ ui <- fluidPage(
                          echartUI("chart5")
                          ), # closing tabPanel Taxable Sales
                 tabPanel(title = "Article Overview", icon = icon("landmark"),
+                         uiOutput("art_view"),
                          echartUI("chart6")
                          ) # closing tabPanel Article Overview
                 ) # closing tabsetPanel
@@ -54,20 +55,27 @@ ui <- fluidPage(
 # Define server
 server <- function(input, output, session) {
     
+    # This is calling the module necessary to filter by county
     filt_cr <- callModule(filterDataServer, "county", df = collections_refunds)
     
+    # This is calling the module necessary to filter by article
     filt_art <- callModule(filterArticleServer, "article", df = article_overview)
     
+    # This is applying the county filter to the Monthly Sales data
     filt_ms <- reactive({
         monthly_sales %>%
             filter(county %in% filt_cr()$county)
     })
     
+    # This is applying the county filter to the filtered article data from the
+    # article filter selection module
     fin_art <- reactive({
         filt_art() %>%
             filter(county %in% filt_cr()$county)
     })
     
+    # This is a series of module calls to produce the necessary charts from the 
+    # chart module. Every chart is being produced from the same module
     callModule(echartServer, "chart1", df = filt_cr,
                column_name = "gross_collections", chart_name = "Gross Collections")
     
@@ -85,6 +93,14 @@ server <- function(input, output, session) {
     
     callModule(echartServer, "chart6", df = fin_art,
                column_name = "distributable_proceeds", chart_name = "Distributable Proceeds")
+    
+    # This is a bit of explanatory reactive UI that is being injected into the 
+    # article overview tab to make sure users know what they are looking at
+    output$art_view <- renderUI({
+        art_text <- unique(filt_art()$article)
+        
+        tags$h4(HTML(paste("You have selected and are viewing data for Article", art_text)))
+    })
 
 }
 
