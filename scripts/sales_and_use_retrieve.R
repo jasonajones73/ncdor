@@ -16,7 +16,7 @@ targets <- read_csv("files/sales_and_use/sales_and_use_targets.csv",
 # Here is where we are updating the target object for new month
 # You should change this value to the new year
 targets <- targets %>%
-  add_row(year = "2020")
+  add_row(year = "2021")
 
 # This is overwriting your targets.csv file with the new row you have added
 write_csv(targets, "files/sales_and_use/sales_and_use_targets.csv", append = FALSE)
