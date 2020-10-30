@@ -54,5 +54,5 @@ monthly_sales <- map2_df(.x = targets$month,
   mutate(fiscal_year = ifelse(lubridate::month(date) > 6, lubridate::year(date) + 1, lubridate::year(date)))
 
 # Write data ----
-write_rds(monthly_sales, path = "data/monthly_sales.rds")
-write_csv(monthly_sales, path = "data/monthly_sales.csv", na = "", append = FALSE)
+write_rds(monthly_sales, file = "data/monthly_sales.rds")
+write_csv(monthly_sales, file = "data/monthly_sales.csv", na = "", append = FALSE)

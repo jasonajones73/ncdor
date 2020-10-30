@@ -35,6 +35,6 @@ article_overview <- map2_df(.x = targets$month,
             .funs = as.numeric)
 
 # Write data ----
-write_rds(article_overview, path = "data/article_overview.rds")
-write_csv(article_overview, path = "data/article_overview.csv", na = "", append = FALSE)
+write_rds(article_overview, file = "data/article_overview.rds")
+write_csv(article_overview, file = "data/article_overview.csv", na = "", append = FALSE)
 

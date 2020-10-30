@@ -101,6 +101,6 @@ summary <- map2_df(.x = targets$month,
   mutate_all(.funs = ~str_replace_all(., "[\r\n]" , ""))
 
 # Write data ----
-write_rds(summary, path = "data/summary.rds")
-write_csv(summary, path = "data/summary.csv", na = "", append = FALSE)
+write_rds(summary, file = "data/summary.rds")
+write_csv(summary, file = "data/summary.csv", na = "", append = FALSE)
 

@@ -37,6 +37,6 @@ collections_refunds <- map2_df(.x = targets$month,
 
 
 # Write data ----
-write_rds(collections_refunds, path = "data/collections_refunds.rds")
-write_csv(collections_refunds, path = "data/collections_refunds.csv", na = "", append = FALSE)
+write_rds(collections_refunds, file = "data/collections_refunds.rds")
+write_csv(collections_refunds, file = "data/collections_refunds.csv", na = "", append = FALSE)
 
