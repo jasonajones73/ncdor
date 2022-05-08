@@ -4,40 +4,69 @@
 
 # Load packages ----
 library(rvest)
-library(httr)
+library(Rcrawler)
 library(tidyverse)
+library(httr)
+library(lubridate)
+library(stringi)
 
-# Read in targets ----
-# Note: targets.csv file should be updated to reflect all of the files that
-# you would like to capture. Currently Jul 2016 - Nov 2019
-targets <- read_csv("files/distributions/dist_targets.csv",
-                    col_types = cols(year = col_character())) %>%
-  mutate(month = str_to_lower(month))
+## Extract links from NC DOR Website
+LinkExtractor(url = "https://www.ncdor.gov/local-government-distributions", ExternalLInks = TRUE) -> pages
 
-# Here is where we are updating the target object for new month
-# You should change these values for the new month
-targets <- targets %>%
-  add_row(month = "december", year = "2020")
+## Grab internal links and looks for Sales and Use standard naming
+tibble(links = pages$InternalLinks) %>%
+  filter(str_detect(links, "sales-use-distribution") | str_detect(links, "/node/")) -> pages
 
-# This is overwriting your targets.csv file with the new row you have added
-write_csv(targets, "files/distributions/dist_targets.csv", append = FALSE)
+## Cycle through pages and extract links from those pages as well
+pages %>%
+  mutate(links = map(.x = links, .f = ~LinkExtractor(url = .x, ExternalLInks = TRUE))) -> pages
 
-# Construct function
-# Note: This is not how I wanted to construct this function. There is a single
-# misspelling in the URL for October 2017 that I could not write error
-# handling for. Since it is the only known error, I wrote in an ifelse handle
-f <- function(month, year) {
-  target_url <- sprintf("https://www.ncdor.gov/documents/sales-use-distribution-%s-%s", month, year)
-  ncdor <- read_html(target_url)
-  xml_stuff <- html_nodes(ncdor, ".file a") %>%
-    xml_attrs()
-  doc_link <- ifelse(length(xml_stuff) > 0,
-                     xml_stuff[[4]][["href"]],
-                     "https://files.nc.gov/ncdor/documents/files/sandu_10-17_2.xlsx")
-  GET(url = doc_link, write_disk(path = sprintf("files/distributions/%s-%s.xlsx", month, year), overwrite = TRUE))
+## Cycle through internal links of each of those pages, filter those pages for
+## the links we are looking for, take the second of each of those links for the 
+## Excel spreadsheet, and get rid of links from other pages we don't want yet
+pages %>%
+  mutate(links = map(.x = links, .f = ~tibble(links = .x$InternalLinks))) %>%
+  mutate(links = map(.x = links, .f = ~filter(.data = .x, str_ends(links, "open")))) %>%
+  mutate(links = map_chr(.x = links, .f = ~.x$links[2])) %>%
+  filter(str_detect(links, "use") | str_detect(links, "sandu")) -> test
+
+## Function to download each spreadsheet from State site
+f <- function(state_url) {
+  x <- str_sub(state_url, 1, -8)
+  x <- stri_sub(x, -5)
+  x <- ifelse(str_starts(x, "-"), str_remove(x, "-"), x)
+  x <- ifelse(str_length(x) == 4, paste0("0", x, "-01"), paste0(x, "-01"))
+  x <- as.POSIXct(x, format = "%m-%y-%d")
+  
+  tibble(months = str_to_lower(month.name)) %>%
+    mutate(test = str_detect(state_url, months)) %>%
+    filter(test == TRUE) %>%
+    pull(months) -> month
+  
+  month <- if(length(month) == 0) {
+    str_to_lower(as.character(month(x, label = TRUE, abbr = FALSE)))
+  } else {
+    month
+  }
+  
+  tibble(years = as.character(seq(2010, year(today())))) %>%
+    mutate(test = str_detect(state_url, years)) %>%
+    filter(test == TRUE) %>%
+    pull(years) -> year
+  
+  year <- if(length(year) == 0) {
+    as.character(year(x))
+  } else {
+    year
+  }
+  
+  ext <- ifelse(x > as.POSIXct("02-16-01", format = "%m-%y-%d"), "xlsx", "xls")
+  ext <- ifelse(is.na(ext), "xlsx", ext)
+  
+  map(.x = state_url,
+      .f = ~GET(url = .x, write_disk(path = sprintf("files/distributions/%s-%s.%s", month, year, ext), overwrite = TRUE)))
 }
 
-# Download files
-map2(.x = targets$month,
-     .y = targets$year,
-     .f = ~f(month = .x, year = .y))
+## Mapping that function to the State web links we now have to download files
+map(.x = test$links,
+    .f = ~f(.x))
