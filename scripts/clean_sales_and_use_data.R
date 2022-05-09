@@ -8,15 +8,17 @@ library(janitor)
 library(tidyverse)
 
 # Load targets ----
-targets <- read_csv("files/sales_and_use/sales_and_use_targets.csv",
-                    col_types = cols(year = col_character()))
+targets <- tibble(files = list.files(path = "./files/sales_and_use/")) %>%
+  filter(files != "county_listing.csv")
 
 county_list <- read_csv("files/sales_and_use/county_listing.csv") %>%
   mutate(county = str_to_upper(county))
 
 # Construct read function for collections and refunds ----
-f <- function(year) {
-  path = sprintf("files/sales_and_use/sales-and-use-fy-%s.xls", year)
+f <- function(filename) {
+  path = sprintf("files/sales_and_use/%s", filename)
+  
+  year <- str_remove(str_remove(filename, "sales-and-use-fy-"), ".xls")
   
   sheet_names <- excel_sheets(path) %>%
     tolower() %>%
@@ -118,13 +120,16 @@ f <- function(year) {
 }
 
 # Combine files for collections and refunds ---
-sales_and_use <- map_df(.x = targets$year,
-                        .f = ~f(year = .x))
+sales_and_use <- map_df(.x = targets$files,
+                        .f = ~f(filename = .x))
+
+sales_and_use <- sales_and_use %>%
+  mutate(county = str_to_title(county))
 
 
 # Write data ----
-write_rds(sales_and_use, path = "data/sales_and_use.rds")
-write_csv(sales_and_use, path = "data/sales_and_use.csv", na = "", append = FALSE)
+write_rds(sales_and_use, file = "data/sales_and_use.rds")
+write_csv(sales_and_use, file = "data/sales_and_use.csv", na = "", append = FALSE)
 
 
 
