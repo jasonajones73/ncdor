@@ -28,12 +28,12 @@ pages %>%
   mutate(links = map(.x = links, .f = ~tibble(links = .x$InternalLinks))) %>%
   mutate(links = map(.x = links, .f = ~filter(.data = .x, str_ends(links, "open")))) %>%
   mutate(links = map_chr(.x = links, .f = ~.x$links[2])) %>%
-  filter(!(is.na(links))) %>%
-  mutate(links = str_remove(links, "-amended"))-> test
+  filter(!(is.na(links))) -> test
 
 ## Function to download each spreadsheet from State site
 f <- function(state_url) {
-  x <- str_sub(state_url, 1, -8)
+  x <- str_remove(state_url, "-amended")
+  x <- str_sub(x, 1, -8)
   x <- ifelse(str_ends(x, "-"), str_sub(state_url, 1, -6), x)
   x <- stri_sub(x, -5)
   x <- ifelse(str_starts(x, "-"), str_remove(x, "-"), x)

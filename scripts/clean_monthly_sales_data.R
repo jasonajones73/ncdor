@@ -8,17 +8,20 @@ library(janitor)
 library(tidyverse)
 
 # Load targets ----
-targets <- read_csv("files/monthly_sales/monthly_sales_targets.csv",
-                    col_types = cols(year = col_character())) %>%
-  mutate(month = str_to_lower(month))
-
-# Filter November 2007 for now ----
-targets <- targets %>%
-  filter(paste(month, year) != "november 2007")
+targets <- tibble(files = list.files(path = "./files/monthly_sales/"))
 
 # Construct read function for collections and refunds ----
-f <- function(month, year) {
-  path = sprintf("files/monthly_sales/monthly-sales-%s-%s.xls", month, year)
+f <- function(filename) {
+  path = sprintf("files/monthly_sales/%s", filename)
+  
+  my <- ifelse(str_ends(filename, ".xlsx"), str_remove(filename, ".xlsx"), str_remove(filename, ".xls")) %>%
+    str_remove(., "monthly-sales-") %>%
+    str_split(pattern = "-") %>%
+    tibble(month = .[[1]][1], year = .[[1]][2]) %>%
+    select(-.)
+  year <- pull(my, year)
+  month <- pull(my, month)
+  
   dat <- read_xls(path = path,
                   sheet = "County", skip = 0, trim_ws = TRUE, col_types = "text")
   head_row <- which(dat[,1] == "County")
@@ -46,9 +49,8 @@ f <- function(month, year) {
 }
 
 # Combine files for collections and refunds ---
-monthly_sales <- map2_df(.x = targets$month,
-                         .y = targets$year,
-                         .f = ~f(month = .x, year = .y)) %>%
+monthly_sales <- map_df(.x = targets$files,
+                         .f = ~f(filename = .x)) %>%
   mutate(date = sprintf("%s/%s/1", str_to_title(month), year)) %>%
   mutate(date = as.Date(date, format = "%B/%Y/%d")) %>%
   mutate(fiscal_year = ifelse(lubridate::month(date) > 6, lubridate::year(date) + 1, lubridate::year(date)))
