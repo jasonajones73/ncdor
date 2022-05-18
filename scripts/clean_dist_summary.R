@@ -8,16 +8,51 @@ library(janitor)
 library(tidyverse)
 
 # Load targets ----
-targets <- read_csv("files/distributions/dist_targets.csv",
-                    col_types = cols(year = col_character())) %>%
-  mutate(month = str_to_lower(month))
+targets <- tibble(files = list.files(path = "./files/distributions/"))
 
 # Construct read function for collections and refunds ----
-f <- function(month, year) {
-  path = sprintf("files/distributions/%s-%s.xlsx", month, year)
-  if(paste(year, month) == "2016 july") {
-    read_xlsx(path = path,
-              sheet = "Summary", skip = 0, col_types = "text") %>%
+f <- function(filename) {
+  path = sprintf("files/distributions/%s", filename)
+  
+  my <- ifelse(str_ends(filename, ".xlsx"), str_remove(filename, ".xlsx"), str_remove(filename, ".xls")) %>%
+    str_split(pattern = "-") %>%
+    tibble(month = .[[1]][1], year = .[[1]][2]) %>%
+    select(-.)
+  year <- pull(my, year)
+  month <- pull(my, month)
+  
+  my_file_test <- read_excel(path = path,
+                        sheet = "Summary", skip = 0, col_types = "text") %>%
+    clean_names() %>%
+    remove_empty(which = c("rows", "cols")) %>%
+    pull(var = 2) %>%
+    .[1]
+  
+  my_file_test <- ifelse(is.na(my_file_test), "special", my_file_test)
+
+  if(my_file_test == "(Per Capita)") {
+    read_excel(path = path, sheet = "Summary", skip = 0, col_types = "text") %>%
+      clean_names() %>%
+      remove_empty(which = c("rows", "cols")) %>%
+      rename(municipality = 2, county = 1) %>%
+      mutate(municipality = str_to_title(municipality)) %>%
+      filter(municipality != "Total") %>%
+      mutate(category = case_when(str_detect(municipality, "Per Capita") ~ "Per Capita",
+                                  str_detect(municipality, "Ad Valorem") ~ "Ad Valorem")) %>%
+      mutate(municipality = case_when(str_detect(municipality, "Per Capita") == TRUE ~ county,
+                                      str_detect(municipality, "Ad Valorem") == TRUE ~ county,
+                                      str_detect(municipality, "Per Capita") != TRUE ~ municipality,
+                                      str_detect(municipality, "Ad Valorem") != TRUE ~ municipality)) %>%
+      mutate(type = case_when(is.na(category) != TRUE ~ "County",
+                              is.na(category) == TRUE ~ "Municipality")) %>%
+      fill(category, county, .direction = "down") %>%
+      mutate(municipality = str_remove(municipality, "\\*")) %>%
+      select(-total) %>%
+      mutate_at(.vars = 3:11, .funs = ~replace_na(.,"0")) %>%
+      mutate(month = month, year = year)
+  } else if (my_file_test == "ALAMANCE                           (PER CAPITA)") {
+    read_excel(path = path,
+               sheet = "Summary", skip = 0, col_types = "text") %>%
       clean_names() %>%
       remove_empty(which = c("rows", "cols")) %>%
       select(-1) %>%
@@ -37,9 +72,9 @@ f <- function(month, year) {
       mutate_at(.vars = 2:11, .funs = ~replace_na(.,"0")) %>%
       mutate(month = month, year = year) %>%
       select(county, everything())
-  } else if (paste(year, month) == "2018 march") {
-    read_xlsx(path = path,
-              sheet = "Summary", skip = 0, col_types = "text") %>%
+  } else if (my_file_test == "special") {
+    read_excel(path = path,
+               sheet = "Summary", skip = 0, col_types = "text") %>%
       clean_names() %>%
       remove_empty(which = c("rows", "cols")) %>%
       select(-1, -2) %>%
@@ -60,18 +95,14 @@ f <- function(month, year) {
       mutate(month = month, year = year) %>%
       select(county, everything())
   } else {
-    read_xlsx(path = path,
-              sheet = "Summary", skip = 0, col_types = "text") %>%
+    read_excel(path = path, sheet = "Summary", skip = 0, col_types = "text") %>%
       clean_names() %>%
       remove_empty(which = c("rows", "cols")) %>%
-      select(-1) %>%
-      mutate(municipality = str_to_title(municipality)) %>%
-      rename(county = municipality) %>%
-      rename(municipality = 2) %>%
+      rename(municipality = 2, county = 1) %>%
       mutate(municipality = str_to_title(municipality)) %>%
       filter(municipality != "Total") %>%
       mutate(category = case_when(str_detect(municipality, "Per Capita") ~ "Per Capita",
-                                  str_detect(municipality, "Ad Valorem") ~ "Ad Valorem")) %>%  
+                                  str_detect(municipality, "Ad Valorem") ~ "Ad Valorem")) %>%
       mutate(municipality = case_when(str_detect(municipality, "Per Capita") == TRUE ~ county,
                                       str_detect(municipality, "Ad Valorem") == TRUE ~ county,
                                       str_detect(municipality, "Per Capita") != TRUE ~ municipality,
@@ -87,9 +118,8 @@ f <- function(month, year) {
 }
 
 # Combine files for collections and refunds ---
-summary <- map2_df(.x = targets$month,
-                   .y = targets$year,
-                   .f = ~f(month = .x, year = .y)) %>%
+summary <- map_df(.x = targets$files,
+                   .f = ~f(filename = .x)) %>%
   mutate(date = sprintf("%s/%s/1", str_to_title(month), year)) %>%
   mutate(date = as.Date(date, format = "%B/%Y/%d")) %>%
   mutate(fiscal_year = ifelse(lubridate::month(date) > 6, lubridate::year(date) + 1, lubridate::year(date))) %>%
